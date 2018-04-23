@@ -1,9 +1,8 @@
 package com.trendyol.ecampman.campaign.api.persistence;
 
-import com.trendyol.ecampman.campaign.api.persistence.entity.CampaignEntity;
+import com.trendyol.ecampman.campaign.api.persistence.entity.Campaign;
 import com.trendyol.ecampman.campaign.api.persistence.entity.CampaignType;
 import com.trendyol.ecampman.campaign.api.persistence.repository.CampaignRepository;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +27,15 @@ public class CampaignRepositoryTest {
     @Test
     public void testSaveNewCampaign() {
         // Given
-        CampaignEntity newCampaign = CampaignEntity.builder()
+        Campaign newCampaign = Campaign.builder()
                 .campaignType(CampaignType.AMOUNT)
-                .poductId(1L)
+                .targetId(1L)
                 .discount(10L)
                 .build();
 
         // When
-        CampaignEntity save = campaignRepository.save(newCampaign);
-        List<CampaignEntity> allCampaigns = campaignRepository.findAll();
+        Campaign save = campaignRepository.save(newCampaign);
+        List<Campaign> allCampaigns = campaignRepository.findAll();
 
         // Then
         assertNotNull(save);
@@ -45,18 +44,18 @@ public class CampaignRepositoryTest {
 
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
             statements = {
-                    "INSERT INTO CAMPAIGNS(campaign_id, campaign_type, discount, max_discount_rate, product_id) " +
+                    "INSERT INTO CAMPAIGNS(campaign_id, campaign_type, discount, max_discount_amount, target_id) " +
                             "VALUES(1, 'AMOUNT', 10, 0, 1);"
             })
     @Test
     public void testUpdateCampaign() {
         // Given
-        Optional<CampaignEntity> targetCampaign = campaignRepository.findById(1L);
-        CampaignEntity campaignEntity = targetCampaign.get();
+        Optional<Campaign> targetCampaign = campaignRepository.findById(1L);
+        Campaign campaign = targetCampaign.get();
 
         // When
-        campaignEntity.setDiscount(100L);
-        CampaignEntity savedEntity = campaignRepository.save(campaignEntity);
+        campaign.setDiscount(100L);
+        Campaign savedEntity = campaignRepository.save(campaign);
 
         // Then
         assertNotNull(savedEntity);
@@ -64,20 +63,20 @@ public class CampaignRepositoryTest {
 
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
             statements = {
-                    "INSERT INTO CAMPAIGNS(campaign_id, campaign_type, discount, max_discount_rate, product_id) " +
+                    "INSERT INTO CAMPAIGNS(campaign_id, campaign_type, discount, max_discount_amount, target_id) " +
                             "VALUES(1, 'AMOUNT', 10, 0, 1);"
             })
     @Test
     public void testDeleteCampaign() {
         // Given
-        Optional<CampaignEntity> targetCampaign = campaignRepository.findById(1L);
-        CampaignEntity campaignEntity = targetCampaign.get();
+        Optional<Campaign> targetCampaign = campaignRepository.findById(1L);
+        Campaign campaign = targetCampaign.get();
 
         // When
-        campaignRepository.delete(campaignEntity);
+        campaignRepository.delete(campaign);
 
         // Then
-        Optional<CampaignEntity> deletedEntity = campaignRepository.findById(1L);
+        Optional<Campaign> deletedEntity = campaignRepository.findById(1L);
         if(deletedEntity.isPresent()) {
             fail("Deletion failed");
         }

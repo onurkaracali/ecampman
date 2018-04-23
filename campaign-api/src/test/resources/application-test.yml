@@ -1,2 +1,5 @@
 spring:
   profiles: test
+
+campaign:
+  maxDiscountValueForRateCampaign: 100
