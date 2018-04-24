@@ -1,12 +1,13 @@
 package com.trendyol.ecampman.campaign.api.service;
 
+import com.google.common.collect.Lists;
 import com.trendyol.ecampman.campaign.api.config.CampaignApiProperties;
+import com.trendyol.ecampman.campaign.api.exception.ValidationException;
 import com.trendyol.ecampman.campaign.api.persistence.entity.Campaign;
 import com.trendyol.ecampman.campaign.api.persistence.entity.CampaignTargetType;
 import com.trendyol.ecampman.campaign.api.persistence.entity.CampaignType;
 import com.trendyol.ecampman.campaign.api.persistence.repository.CampaignRepository;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,10 +16,13 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -41,6 +45,47 @@ public class CampaignServiceTest {
     }
 
     @Test
+    public void testGetCampaignById_ShouldReturnCampaignInstanceById() {
+        Campaign expectedCampaign = Campaign.builder()
+                .id(1L)
+                .targetType(CampaignTargetType.PRODUCT)
+                .campaignType(CampaignType.AMOUNT)
+                .targetId(123L)
+                .discount(200L)
+                .build();
+
+        when(campaignRepository.findById(1L)).thenReturn(Optional.of(expectedCampaign));
+        Campaign campaign = campaignService.getCampaignById(1L);
+
+        assertThat(campaign, Matchers.equalTo(expectedCampaign));
+    }
+
+    @Test
+    public void testGelAllCampaigns_ShouldReturnAllCampaigns() {
+        ArrayList<Campaign> expectedCampaigns = Lists.newArrayList(
+                Campaign.builder()
+                        .id(1L)
+                        .targetType(CampaignTargetType.PRODUCT)
+                        .campaignType(CampaignType.AMOUNT)
+                        .targetId(123L)
+                        .discount(200L)
+                        .build(),
+                Campaign.builder()
+                        .id(1L)
+                        .targetType(CampaignTargetType.PRODUCT)
+                        .campaignType(CampaignType.AMOUNT)
+                        .targetId(123L)
+                        .discount(200L)
+                        .build());
+
+        when(campaignRepository.findAll()).thenReturn(expectedCampaigns);
+
+        List<Campaign> campaigns = campaignService.getAllCampaigns();
+
+        assertThat(expectedCampaigns, equalTo(campaigns));
+    }
+
+    @Test
     public void testSave_ShouldSaveCampaignEntityToDB_WithNewCampaign() {
         // Given
         Campaign givenCampaign = Campaign.builder()
@@ -57,7 +102,7 @@ public class CampaignServiceTest {
         verify(campaignRepository, times(1)).save(eq(givenCampaign));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = ValidationException.class)
     public void testSave_ShouldThrowException_WhenRateCampaignAndMaxDiscountAmountIsEmpty() {
         // Given
         Campaign campaignToSave = Campaign.builder()
@@ -70,7 +115,7 @@ public class CampaignServiceTest {
         campaignService.saveNewCampaign(campaignToSave);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = ValidationException.class)
     public void testSave_ShouldThrowException_WhenDiscountIsNotValid() {
         // Given
         Campaign campaignToSave = Campaign.builder()
@@ -118,7 +163,7 @@ public class CampaignServiceTest {
         assertThat(capturedCampaign.getCampaignType(), is(CampaignType.RATE));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = ValidationException.class)
     public void testUpdate_ShouldThrowException_WhenCampaignIdNotFound() {
         // Given
         Campaign updatingCampaign = Campaign.builder()
@@ -135,7 +180,7 @@ public class CampaignServiceTest {
         campaignService.updateCampaign(updatingCampaign);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = ValidationException.class)
     public void testUpdate_ShouldThrowException_WhenNewCampaignParamsInvalid() {
         // Given
         Campaign invalidCampaign = Campaign.builder()

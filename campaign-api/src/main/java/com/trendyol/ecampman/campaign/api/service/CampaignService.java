@@ -1,29 +1,40 @@
 package com.trendyol.ecampman.campaign.api.service;
 
 import com.trendyol.ecampman.campaign.api.config.CampaignApiProperties;
+import com.trendyol.ecampman.campaign.api.exception.CampaignNotFoundException;
+import com.trendyol.ecampman.campaign.api.exception.ValidationException;
 import com.trendyol.ecampman.campaign.api.persistence.entity.Campaign;
 import com.trendyol.ecampman.campaign.api.persistence.entity.CampaignType;
 import com.trendyol.ecampman.campaign.api.persistence.repository.CampaignRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
-@RequiredArgsConstructor
+@Service
 public class CampaignService {
 
     private final CampaignRepository campaignRepository;
     private final CampaignApiProperties campaignApiProperties;
 
-    public void saveNewCampaign(Campaign campaign) {
-        campaign.setCreateDateTime(LocalDateTime.now());
-        saveCampaign(campaign);
+    @Autowired
+    public CampaignService(CampaignRepository campaignRepository,
+                           CampaignApiProperties campaignApiProperties) {
+        this.campaignRepository = campaignRepository;
+        this.campaignApiProperties = campaignApiProperties;
     }
 
-    public void updateCampaign(Campaign campaign) {
+    public Campaign saveNewCampaign(Campaign campaign) {
+        campaign.setCreateDateTime(LocalDateTime.now());
+        return saveCampaign(campaign);
+    }
+
+    public Campaign updateCampaign(Campaign campaign) {
         Optional<Campaign> campaignEntityOpt = campaignRepository.findById(campaign.getId());
         if (!campaignEntityOpt.isPresent()) {
-            throw new RuntimeException("Campaign could not be found with given id!");
+            throw new ValidationException("Campaign could not be found with given id!");
         }
 
         Campaign originalCampaign = campaignEntityOpt.get();
@@ -32,16 +43,16 @@ public class CampaignService {
         originalCampaign.setTargetId(campaign.getTargetId());
         originalCampaign.setDiscount(campaign.getDiscount());
         originalCampaign.setMaxDiscountAmount(campaign.getMaxDiscountAmount());
-        saveCampaign(originalCampaign);
+        return saveCampaign(originalCampaign);
     }
 
-    private void saveCampaign(Campaign campaign) {
+    private Campaign saveCampaign(Campaign campaign) {
         if (!isCampaignValid(campaign)) {
-            throw new RuntimeException("Campaign is not valid!");
+            throw new ValidationException("Campaign is not valid!");
         }
 
         campaign.setUpdateDateTime(LocalDateTime.now());
-        campaignRepository.save(campaign);
+        return campaignRepository.save(campaign);
     }
 
     public boolean isCampaignValid(Campaign campaign) {
@@ -57,5 +68,17 @@ public class CampaignService {
 
     public void deleteCampaign(Campaign campaignToDelete) {
         campaignRepository.delete(campaignToDelete);
+    }
+
+    public Campaign getCampaignById(long campaignId) {
+        Optional<Campaign> byId = campaignRepository.findById(campaignId);
+        if (!byId.isPresent()) {
+            throw new CampaignNotFoundException();
+        }
+        return byId.get();
+    }
+
+    public List<Campaign> getAllCampaigns() {
+        return campaignRepository.findAll();
     }
 }
