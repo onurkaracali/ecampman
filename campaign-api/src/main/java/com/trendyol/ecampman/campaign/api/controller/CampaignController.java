@@ -1,5 +1,7 @@
 package com.trendyol.ecampman.campaign.api.controller;
 
+import com.trendyol.ecampman.campaign.api.controller.model.CampaignListResponse;
+import com.trendyol.ecampman.campaign.api.controller.model.CampaignView;
 import com.trendyol.ecampman.campaign.api.exception.CampaignNotFoundException;
 import com.trendyol.ecampman.campaign.api.persistence.entity.Campaign;
 import com.trendyol.ecampman.campaign.api.persistence.entity.CampaignTargetType;
@@ -7,12 +9,9 @@ import com.trendyol.ecampman.campaign.api.persistence.entity.CampaignType;
 import com.trendyol.ecampman.campaign.api.service.CampaignService;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
