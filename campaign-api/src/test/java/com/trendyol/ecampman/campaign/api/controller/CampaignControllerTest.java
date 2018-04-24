@@ -123,8 +123,7 @@ public class CampaignControllerTest {
         when(campaignRepository.findById(1L)).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/campaigns/1").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(""));
+                .andExpect(status().isNotFound());
     }
 
     @Test
