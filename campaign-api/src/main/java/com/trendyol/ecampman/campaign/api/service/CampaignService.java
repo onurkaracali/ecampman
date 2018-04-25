@@ -1,9 +1,9 @@
 package com.trendyol.ecampman.campaign.api.service;
 
 import com.trendyol.ecampman.campaign.api.config.CampaignApiProperties;
-import com.trendyol.ecampman.campaign.api.exception.CampaignNotFoundException;
 import com.trendyol.ecampman.campaign.api.exception.ValidationException;
 import com.trendyol.ecampman.campaign.api.persistence.entity.Campaign;
+import com.trendyol.ecampman.campaign.api.persistence.entity.CampaignTargetType;
 import com.trendyol.ecampman.campaign.api.persistence.entity.CampaignType;
 import com.trendyol.ecampman.campaign.api.persistence.repository.CampaignRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,15 +70,19 @@ public class CampaignService {
         campaignRepository.delete(campaignToDelete);
     }
 
-    public Campaign getCampaignById(long campaignId) {
-        Optional<Campaign> byId = campaignRepository.findById(campaignId);
-        if (!byId.isPresent()) {
-            throw new CampaignNotFoundException();
-        }
-        return byId.get();
+    public void deleteCampaign(Long campaignId) {
+        campaignRepository.deleteById(campaignId);
+    }
+
+    public Optional<Campaign> getCampaignById(long campaignId) {
+        return campaignRepository.findById(campaignId);
     }
 
     public List<Campaign> getAllCampaigns() {
         return campaignRepository.findAll();
+    }
+
+    public Optional<Campaign> getCampaignForTarget(CampaignTargetType targetType, long productId) {
+        return campaignRepository.findByTargetTypeAndTargetId(targetType, productId);
     }
 }

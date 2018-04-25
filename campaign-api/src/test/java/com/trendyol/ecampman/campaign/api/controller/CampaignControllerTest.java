@@ -2,9 +2,9 @@ package com.trendyol.ecampman.campaign.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
-import com.trendyol.ecampman.campaign.api.controller.model.CampaignListResponse;
-import com.trendyol.ecampman.campaign.api.controller.model.CampaignView;
-import com.trendyol.ecampman.campaign.api.controller.model.ErrorResponse;
+import com.trendyol.ecampman.campaign.api.model.CampaignListResponse;
+import com.trendyol.ecampman.campaign.api.model.CampaignView;
+import com.trendyol.ecampman.campaign.api.model.ErrorResponse;
 import com.trendyol.ecampman.campaign.api.persistence.entity.Campaign;
 import com.trendyol.ecampman.campaign.api.persistence.entity.CampaignTargetType;
 import com.trendyol.ecampman.campaign.api.persistence.entity.CampaignType;

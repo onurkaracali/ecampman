@@ -1,7 +1,7 @@
 package com.trendyol.ecampman.campaign.api.controller;
 
-import com.trendyol.ecampman.campaign.api.controller.model.CampaignListResponse;
-import com.trendyol.ecampman.campaign.api.controller.model.CampaignView;
+import com.trendyol.ecampman.campaign.api.model.CampaignListResponse;
+import com.trendyol.ecampman.campaign.api.model.CampaignView;
 import com.trendyol.ecampman.campaign.api.exception.CampaignNotFoundException;
 import com.trendyol.ecampman.campaign.api.persistence.entity.Campaign;
 import com.trendyol.ecampman.campaign.api.persistence.entity.CampaignTargetType;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -44,20 +45,22 @@ public class CampaignController {
 
     @RequestMapping(value = "/{campaignId}", method = RequestMethod.GET, produces = "application/json")
     public CampaignView getCampaignById(@PathVariable Long campaignId) {
-        Campaign campaignFromDB = campaignService.getCampaignById(campaignId);
-        if (campaignFromDB == null) {
+        Optional<Campaign> campaignFromDB = campaignService.getCampaignById(campaignId);
+        if (!campaignFromDB.isPresent()) {
             throw new CampaignNotFoundException();
         }
-        return mapCampaignView(campaignFromDB);
+        return mapCampaignView(campaignFromDB.get());
     }
 
-    @RequestMapping(value = "/{campaignId}", method = RequestMethod.PUT,
-            produces = "application/json", consumes = "application/json")
-    public CampaignView updateCampaign(
-            @PathVariable Long campaignId, @RequestBody CampaignView campaignView) {
+    @RequestMapping(
+            value = "/{campaignId}",
+            method = RequestMethod.PUT,
+            produces = "application/json",
+            consumes = "application/json")
+    public CampaignView updateCampaign(@PathVariable Long campaignId,
+                                       @RequestBody CampaignView campaignView) {
 
         Campaign campaignObj = mapCampaign(campaignView);
-
         return mapCampaignView(campaignService.updateCampaign(campaignObj));
     }
 
@@ -72,9 +75,9 @@ public class CampaignController {
 
     @RequestMapping(value = "/{campaignId}", method = RequestMethod.DELETE)
     public void deleteCampaign(@PathVariable Long campaignId) {
-        Campaign campaign = campaignService.getCampaignById(campaignId);
-
-        campaignService.deleteCampaign(campaign);
+        log.info("Campaign {} is being deleted..");
+        campaignService.deleteCampaign(campaignId);
+        log.info("Campaign {} deleted..");
     }
 
     private CampaignView mapCampaignView(Campaign campaign) {

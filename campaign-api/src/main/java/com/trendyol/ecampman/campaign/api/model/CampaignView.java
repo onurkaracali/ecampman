@@ -1,4 +1,4 @@
-package com.trendyol.ecampman.campaign.api.controller.model;
+package com.trendyol.ecampman.campaign.api.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,9 +15,8 @@ public class CampaignView {
     private Long id;
     private String targetType;
     private Long targetId;
+    private String campaignName;
     private String campaignType;
     private Long discount;
-    private Integer maxDiscountAmount;
-    private LocalDateTime createDateTime;
-    private LocalDateTime updateDateTime;
+    private Long maxDiscountAmount;
 }

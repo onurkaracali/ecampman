@@ -1,6 +1,6 @@
 package com.trendyol.ecampman.campaign.api.controller;
 
-import com.trendyol.ecampman.campaign.api.controller.model.ErrorResponse;
+import com.trendyol.ecampman.campaign.api.model.ErrorResponse;
 import com.trendyol.ecampman.campaign.api.exception.CampaignNotFoundException;
 import com.trendyol.ecampman.campaign.api.exception.ValidationException;
 import org.springframework.http.HttpStatus;

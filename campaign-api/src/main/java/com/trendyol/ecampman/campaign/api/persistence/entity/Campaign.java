@@ -1,6 +1,9 @@
 package com.trendyol.ecampman.campaign.api.persistence.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -25,6 +28,9 @@ public class Campaign {
     @Column(name = "TARGET_ID", nullable = false)
     private Long targetId;
 
+    @Column(name = "CAMPAIGN_NAME")
+    private String name;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "CAMPAIGN_TYPE", nullable = false)
     private CampaignType campaignType;
@@ -33,7 +39,7 @@ public class Campaign {
     private Long discount;
 
     @Column(name = "MAX_DISCOUNT_AMOUNT")
-    private Integer maxDiscountAmount;
+    private Long maxDiscountAmount;
 
     @Column(name = "CREATE_DATE")
     private LocalDateTime createDateTime;

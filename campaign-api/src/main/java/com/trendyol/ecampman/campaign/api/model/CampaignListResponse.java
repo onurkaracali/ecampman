@@ -1,5 +1,6 @@
-package com.trendyol.ecampman.campaign.api.controller.model;
+package com.trendyol.ecampman.campaign.api.model;
 
+import com.trendyol.ecampman.campaign.api.model.CampaignView;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

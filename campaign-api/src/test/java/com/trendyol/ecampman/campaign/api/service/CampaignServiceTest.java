@@ -23,6 +23,7 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -55,9 +56,10 @@ public class CampaignServiceTest {
                 .build();
 
         when(campaignRepository.findById(1L)).thenReturn(Optional.of(expectedCampaign));
-        Campaign campaign = campaignService.getCampaignById(1L);
+        Optional<Campaign> campaign = campaignService.getCampaignById(1L);
 
-        assertThat(campaign, Matchers.equalTo(expectedCampaign));
+        assertTrue(campaign.isPresent());
+        assertThat(campaign.get(), Matchers.equalTo(expectedCampaign));
     }
 
     @Test
@@ -122,7 +124,7 @@ public class CampaignServiceTest {
                 .campaignType(CampaignType.RATE)
                 .discount(200L)
                 .targetId(1L)
-                .maxDiscountAmount(2)
+                .maxDiscountAmount(2L)
                 .build();
 
         // When
@@ -137,7 +139,7 @@ public class CampaignServiceTest {
                 .id(1L)
                 .targetId(1L)
                 .campaignType(CampaignType.RATE)
-                .maxDiscountAmount(20)
+                .maxDiscountAmount(20L)
                 .discount(50L)
                 .build();
 
@@ -217,5 +219,26 @@ public class CampaignServiceTest {
         campaignService.deleteCampaign(campaignToDelete);
 
         verify(campaignRepository).delete(campaignToDelete);
+    }
+
+    @Test
+    public void testGetCampaignByTarget() {
+        // Given
+        long productId = 1L;
+        CampaignTargetType targetType = CampaignTargetType.PRODUCT;
+        Campaign mockCampaign = Campaign.builder()
+                .targetType(targetType)
+                .campaignType(CampaignType.AMOUNT)
+                .discount(100L)
+                .build();
+
+        // When
+        when(campaignRepository.findByTargetTypeAndTargetId(targetType, productId))
+                .thenReturn(Optional.of(mockCampaign));
+
+        Optional<Campaign> campaignForTarget = campaignService.getCampaignForTarget(targetType, productId);
+
+        assertTrue(campaignForTarget.isPresent());
+        assertThat(campaignForTarget.get(), Matchers.equalTo(mockCampaign));
     }
 }
